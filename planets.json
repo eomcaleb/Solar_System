@@ -1,0 +1,13 @@
+{
+	"planet":[
+	{"name":"Sun", "sizes":200, "orbitcycle":"1"},
+	{"name":"Mercury", "sizes":3.8, "orbitcycle":"0.24101369"},
+	{"name":"Venus", "sizes":9.5, "orbitcycle":"0.6156164"},
+	{"name":"Earth", "sizes": 10, "orbitcycle": "1"},
+	{"name":"Mars", "sizes":5.3, "orbitcycle": "1.88219178"},
+	{"name":"Jupiter", "sizes":66, "orbitcycle": "11.86"},
+	{"name":"Saturn", "sizes":57.25, "orbitcycle": "29.46"},
+	{"name":"Uranus", "sizes":20, "orbitcycle": "84.07"},
+	{"name":"Neptune", "sizes":19.4, "orbitcycle": "164.8"}
+	]
+}

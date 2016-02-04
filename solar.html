@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.node {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+
+</style>
+<head>
+
+
+  <script src="d3.min.js"></script>
+</head>
+<body>
+  <script>
+
+      var planetPos = 250;
+      var width = 1080,
+          height = 1000;
+      var color = d3.scale.category10();
+
+      var force = d3.layout.force()
+          .charge(-120)
+          .linkDistance(10)
+          .gravity(0.2)
+          .size([width, height]);
+
+      var svg = d3.select("body").append("svg")
+          .attr("width", width)
+          .attr("height", height);
+
+
+      d3.json("planets.json", function(error, graph) {
+          if (error) throw error;
+
+          force
+            .nodes(graph.planet)
+            .start();
+
+          var node = svg.selectAll(".node")
+            .data(graph.planet)
+            .enter()
+            .append("circle")
+            .attr("id", function(d) {return d.name;})
+            .attr("r", 0)
+            .attr("cy", 300)
+            .style("fill", function(d) { return color(d.name); })
+            .attr("class", "node")
+            .transition()
+            .duration(1000)
+            .attr("r", function(d) {return d.sizes;})
+            .attr("cx", function(d) {
+              if (d.name == "Sun")
+                {
+                  planetPos += d.sizes*2;
+                  var xPOS = planetPos -d.sizes;
+                  return xPOS;
+
+                }
+              else
+                {
+                  planetPos+=(d.sizes*2);
+                  var xPOS = planetPos -d.sizes;
+                  xPOS = xPOS - (graph.planet[0].sizes*2);
+                  return xPOS;
+                }});
+      });
+
+  </script>
+</body>
