@@ -1,13 +1,13 @@
 {
 	"planet":[
-	{"name":"Sun", "sizes":200, "orbitcycle":"1"},
-	{"name":"Mercury", "sizes":3.8, "orbitcycle":"0.24101369"},
-	{"name":"Venus", "sizes":9.5, "orbitcycle":"0.6156164"},
-	{"name":"Earth", "sizes": 10, "orbitcycle": "1"},
-	{"name":"Mars", "sizes":5.3, "orbitcycle": "1.88219178"},
-	{"name":"Jupiter", "sizes":66, "orbitcycle": "11.86"},
-	{"name":"Saturn", "sizes":57.25, "orbitcycle": "29.46"},
-	{"name":"Uranus", "sizes":20, "orbitcycle": "84.07"},
-	{"name":"Neptune", "sizes":19.4, "orbitcycle": "164.8"}
+	{"name":"Sun", "sizes":200, "orbitcycle":"1", "distance": "0.39"},
+	{"name":"Mercury", "sizes":3.8, "orbitcycle":"0.24101369", "distance": "0.72"},
+	{"name":"Venus", "sizes":9.5, "orbitcycle":"0.6156164", "distance": "1"},
+	{"name":"Earth", "sizes": 10, "orbitcycle": "1", "distance": "1.5"},
+	{"name":"Mars", "sizes":5.3, "orbitcycle": "1.88219178", "distance": "5.2"},
+	{"name":"Jupiter", "sizes":66, "orbitcycle": "11.86", "distance": "9.5"},
+	{"name":"Saturn", "sizes":57.25, "orbitcycle": "29.46", "distance": "19.2"},
+	{"name":"Uranus", "sizes":20, "orbitcycle": "84.07", "distance": "30.1"},
+	{"name":"Neptune", "sizes":19.4, "orbitcycle": "164.8", "distance": "39.5"}
 	]
 }

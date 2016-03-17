@@ -2,9 +2,21 @@
 <meta charset="utf-8">
 <style>
 
+body{
+  background-color: #161616;
+}
+
+button {
+  background-color: #404040;
+  border:0;
+  color: white;
+  font-weight: bolder;
+  padding: 10px 10px;
+}
 .node {
   stroke: #fff;
-  stroke-width: 1.5px;
+  stroke-width: 1px;
+
 }
 
 .link {
@@ -19,59 +31,68 @@
   <script src="d3.min.js"></script>
 </head>
 <body>
+  <button type="button" onmouseover="align_by_distance();">Distance</button> <br/>
+  <button type="button" onmouseover="align_by_x_axis();">Align By X</button> <br/>
+  <button type="button" onmouseover="align_by_y_axis();">Align By Y</button>
+  <div id="graph"></div>
   <script>
 
-      var planetPos = 250;
-      var width = 1080,
+      var width = 2080,
           height = 1000;
       var color = d3.scale.category10();
+      var planets = [];
 
-      var force = d3.layout.force()
-          .charge(-120)
-          .linkDistance(10)
-          .gravity(0.2)
-          .size([width, height]);
 
-      var svg = d3.select("body").append("svg")
+      var svg = d3.select("#graph").append("svg")
           .attr("width", width)
           .attr("height", height);
 
+      let_there_be_light();
 
-      d3.json("planets.json", function(error, graph) {
-          if (error) throw error;
-
-          force
-            .nodes(graph.planet)
-            .start();
-
-          var node = svg.selectAll(".node")
-            .data(graph.planet)
-            .enter()
-            .append("circle")
-            .attr("id", function(d) {return d.name;})
-            .attr("r", 0)
-            .attr("cy", 300)
-            .style("fill", function(d) { return color(d.name); })
-            .attr("class", "node")
-            .transition()
-            .duration(1000)
-            .attr("r", function(d) {return d.sizes;})
-            .attr("cx", function(d) {
-              if (d.name == "Sun")
-                {
-                  planetPos += d.sizes*2;
-                  var xPOS = planetPos -d.sizes;
-                  return xPOS;
-
-                }
-              else
-                {
-                  planetPos+=(d.sizes*2);
-                  var xPOS = planetPos -d.sizes;
-                  xPOS = xPOS - (graph.planet[0].sizes*2);
-                  return xPOS;
-                }});
-      });
-
+      function let_there_be_light() {
+          var starting_y = 500;
+          d3.json("planets.json", function(error, graph) {
+              if (error) throw error;
+              for (var i in graph.planet) {
+                var d = graph.planet[i];
+                svg.append("circle")
+                  .attr("id", function() {planets.push(d); return d.name;})
+                  .attr("r", function() {return d.sizes/2;})
+                  .attr("cx", 100)
+                  .attr("cy", 0)
+                  .style("fill", function() { if (d.name == "Sun") return "red"; return color(d.name); })
+                  .attr("class", "node")
+                  .transition()
+                  .duration(1000)
+                  .attr("cy", function() {
+                    if (d.name == "Sun")
+                      {
+                        starting_y -= d.sizes;
+                        var xPOS = starting_y + d.sizes/2;
+                        return xPOS;
+                      }
+                    else
+                      {
+                        starting_y-=(d.sizes);
+                        var xPOS = starting_y +d.sizes/2;
+                        return xPOS;
+                      }});
+              }
+          });
+      }
+      function align_by_distance() {
+         for(var planet = 1; planet < planets.length; planet++)
+           d3.select("#"+planets[planet].name).transition().duration(1200).attr("cx", 200 + planets[planet].distance*30).attr("cy", 400);
+      }
+      function align_by_y_axis() {
+         var y_pos_accumulated = 300;
+         for(var planet = 1; planet < planets.length; planet++)
+           d3.select("#"+planets[planet].name).transition().duration(1200).attr("cx", 100).attr("cy", function(){y_pos_accumulated -= (planets[planet].sizes); return y_pos_accumulated +(planets[planet].sizes/2) ;});
+      }
+      function align_by_x_axis() {
+         var x_pos_accumulated = 200;
+         for(var planet = 1; planet < planets.length; planet++)
+           d3.select("#"+planets[planet].name).transition().duration(1200).attr("cy", 400).attr("cx", function(){x_pos_accumulated += (planets[planet].sizes); return x_pos_accumulated -(planets[planet].sizes/2) ;});
+      }
   </script>
 </body>
