@@ -1,6 +1,6 @@
 # Solar_System #
 ### Displaying our solar system's planet size in a circle ###
-![Interface Image](/img/interface.PNG)
+![Interface Image](/img/tutorial.gif)
 
 ## Setup ##
 Firefox - (no install necessary) allows AJAX calls to local files. 
