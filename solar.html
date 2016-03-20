@@ -4,6 +4,7 @@
 
 body{
   background-color: #161616;
+  color: white;
 }
 
 button {
@@ -31,68 +32,80 @@ button {
   <script src="d3.min.js"></script>
 </head>
 <body>
-  <button type="button" onmouseover="align_by_distance();">Distance</button> <br/>
-  <button type="button" onmouseover="align_by_x_axis();">Align By X</button> <br/>
-  <button type="button" onmouseover="align_by_y_axis();">Align By Y</button>
+  <span>Speed: <input type="range" min="1" max="10"></input> </span> <br />
+  <span>Earth Day: 0</span> <br />
+  <button type="button" onmouseover="rotate();">ROTATE</button> <br/>
   <div id="graph"></div>
   <script>
 
-      var width = 2080,
-          height = 1000;
-      var color = d3.scale.category10();
-      var planets = [];
+      var speed_scale = 1;
+      var circle_scale = 4;
+      var static_x = 200,
+          static_y = 500;
 
+      var planets = [];
+      var planets_angle = [];
+      var planets_size = [];
+
+      var color = d3.scale.category10();
+
+      /** **/
+      /** Screen Info **/
+      var screen_width = 1000,
+          screen_height = 1000;
 
       var svg = d3.select("#graph").append("svg")
-          .attr("width", width)
-          .attr("height", height);
+          .attr("width", screen_width)
+          .attr("height", screen_height);
 
       let_there_be_light();
 
       function let_there_be_light() {
-          var starting_y = 500;
+          var starting_y = static_y;
           d3.json("planets.json", function(error, graph) {
               if (error) throw error;
               for (var i in graph.planet) {
                 var d = graph.planet[i];
                 svg.append("circle")
                   .attr("id", function() {planets.push(d); return d.name;})
-                  .attr("r", function() {return d.sizes/2;})
-                  .attr("cx", 100)
+                  .attr("r", function() {return d.sizes/circle_scale;})
+                  .attr("cx", static_x)
                   .attr("cy", 0)
                   .style("fill", function() { if (d.name == "Sun") return "red"; return color(d.name); })
                   .attr("class", "node")
                   .transition()
                   .duration(1000)
                   .attr("cy", function() {
+                    planets_angle.push(0);
                     if (d.name == "Sun")
                       {
-                        starting_y -= d.sizes;
-                        var xPOS = starting_y + d.sizes/2;
-                        return xPOS;
+                        planets_size[0] = d.sizes/circle_scale;
+                        starting_y -= d.sizes/circle_scale *2;
+                        return starting_y + d.sizes/circle_scale;
                       }
                     else
                       {
-                        starting_y-=(d.sizes);
-                        var xPOS = starting_y +d.sizes/2;
-                        return xPOS;
+                        starting_y-=(d.sizes/circle_scale)*2;
+                        return starting_y +d.sizes/circle_scale;
                       }});
               }
           });
       }
-      function align_by_distance() {
-         for(var planet = 1; planet < planets.length; planet++)
-           d3.select("#"+planets[planet].name).transition().duration(1200).attr("cx", 200 + planets[planet].distance*30).attr("cy", 400);
+      function toRadians (angle) {
+        return angle * (Math.PI / 180);
       }
-      function align_by_y_axis() {
-         var y_pos_accumulated = 300;
-         for(var planet = 1; planet < planets.length; planet++)
-           d3.select("#"+planets[planet].name).transition().duration(1200).attr("cx", 100).attr("cy", function(){y_pos_accumulated -= (planets[planet].sizes); return y_pos_accumulated +(planets[planet].sizes/2) ;});
-      }
-      function align_by_x_axis() {
-         var x_pos_accumulated = 200;
-         for(var planet = 1; planet < planets.length; planet++)
-           d3.select("#"+planets[planet].name).transition().duration(1200).attr("cy", 400).attr("cx", function(){x_pos_accumulated += (planets[planet].sizes); return x_pos_accumulated -(planets[planet].sizes/2) ;});
+
+      function rotate() {
+         for(var planet = 1; planet < planets.length; planet++) {
+           planets_size[planet] = planets_size[planet-1] + planets[planet].sizes /circle_scale;
+           planets_angle[planet] += (1/planets[planet].orbitcycle) * speed_scale;
+           d3.select("#"+planets[planet].name).transition().duration(20)
+           .attr("cx", static_x + (Math.sin(toRadians(planets_angle[planet]))*planets_size[planet]) )
+           .attr("cy", (static_y-planets_size[0]) - (Math.cos(toRadians(planets_angle[planet]))*planets_size[planet]) );
+           planets_size[planet] += planets[planet].sizes / circle_scale;
+         }
+         d3.select("#Sun").transition().duration(20).each("end", function(){rotate();});
+          // d3.select("#"+planets[planet].name).transition().duration(1200).attr("cx", 200 + planets[planet].distance*30).attr("cy", 400);
       }
   </script>
 </body>
