@@ -32,27 +32,33 @@ button {
   <script src="d3.min.js"></script>
 </head>
 <body>
-  <span>Speed: <input type="range" min="1" max="10"></input> </span> <br />
-  <span>Earth Day: 0</span> <br />
+  <span>Speed: <input type="range" on="30" min="1" max="50" oninput="change_speed(this.value)" onchange="change_speed(this.value);"></input> </span> <br />
+  <span id="days">Earth Day: 0</span> <br />
   <button type="button" onmouseover="rotate();">ROTATE</button> <br/>
   <div id="graph"></div>
   <script>
 
-      var speed_scale = 1;
-      var circle_scale = 4;
-      var static_x = 200,
-          static_y = 500;
 
+      /** Customizable Scale **/
+      var speed_scale = 1;
+      var circle_scale = 2.5;
+
+      /** Starting static position **/
+      var static_x = 350,
+          static_y = 350;
+      var days = 0;
+
+      /** Array **/
       var planets = [];
       var planets_angle = [];
       var planets_size = [];
 
-      var color = d3.scale.category10();
 
-      /** **/
       /** Screen Info **/
       var screen_width = 1000,
           screen_height = 1000;
+
+      var color = d3.scale.category10();
 
       var svg = d3.select("#graph").append("svg")
           .attr("width", screen_width)
@@ -94,16 +100,19 @@ button {
       function toRadians (angle) {
         return angle * (Math.PI / 180);
       }
-
+      function change_speed(speed){
+        speed_scale = speed;
+      }
       function rotate() {
          for(var planet = 1; planet < planets.length; planet++) {
            planets_size[planet] = planets_size[planet-1] + planets[planet].sizes /circle_scale;
            planets_angle[planet] += (1/planets[planet].orbitcycle) * speed_scale;
            d3.select("#"+planets[planet].name).transition().duration(20)
-           .attr("cx", static_x + (Math.sin(toRadians(planets_angle[planet]))*planets_size[planet]) )
-           .attr("cy", (static_y-planets_size[0]) - (Math.cos(toRadians(planets_angle[planet]))*planets_size[planet]) );
+             .attr("cx", static_x + (Math.sin(toRadians(planets_angle[planet]))*planets_size[planet]) )
+             .attr("cy", (static_y-planets_size[0]) - (Math.cos(toRadians(planets_angle[planet]))*planets_size[planet]) );
            planets_size[planet] += planets[planet].sizes / circle_scale;
          }
+         document.getElementById("days").innerHTML = "Earth Day: " + days++;
          d3.select("#Sun").transition().duration(20).each("end", function(){rotate();});
           // d3.select("#"+planets[planet].name).transition().duration(1200).attr("cx", 200 + planets[planet].distance*30).attr("cy", 400);
       }
